@@ -8,7 +8,7 @@ test:
 	@poetry run pytest
 
 test-matching:
-	@poetry run pytest -s -rx -k $(K) --pdb store ./tests/
+	@poetry run pytest -s -rx -k $(K) --pdb ./tests/
 
 format:
 	isort .

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from src.config import settings
+from src.controllers.controllers import controllers_api_router
 
 
 class App(FastAPI):
@@ -16,7 +17,9 @@ class App(FastAPI):
 
 def create_app():
     app = App()
-    # app.include_router(controllers_api_router)
+
+    app.include_router(controllers_api_router)
+
     return app
 
 

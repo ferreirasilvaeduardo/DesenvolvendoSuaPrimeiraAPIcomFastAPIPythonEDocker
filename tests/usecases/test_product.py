@@ -3,9 +3,9 @@ from uuid import UUID
 
 import pytest
 
-from src.utils.exceptions import NotFoundException
 from src.schemas.product import ProductOut, ProductUpdateOut
 from src.usecases.product import product_usecase
+from src.utils.exceptions import NotFoundException
 
 
 async def test_usecases_create_should_return_success(product_in):

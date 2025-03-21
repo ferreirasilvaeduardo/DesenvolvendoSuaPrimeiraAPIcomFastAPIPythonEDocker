@@ -1,8 +1,8 @@
 # // Description: This file is used to ignore files and directories that are not required to be pushed to the repository.
-# LEIAME.TXT
-# LEIAME.txt
-# txt.txt
-# TXT.TXT
+LEIAME.TXT
+LEIAME.txt
+txt.txt
+TXT.TXT
 .vscode/
 
 
