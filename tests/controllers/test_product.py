@@ -1,10 +1,48 @@
+from datetime import datetime
 from typing import List
+from unittest.mock import AsyncMock
 
 import pytest
 from fastapi import status
 
-from src.utils.exceptions import InsertionException
+from src.usecases.product import ProductUsecase
+from src.utils.exceptions import InsertionException, NotFoundException
 from tests.factories import product_data
+
+
+async def test_patch_should_update_product(mocker):
+    product_id = "123"
+    updates = {"price": 20.0}
+    updated_at = datetime(2025, 3, 21)
+
+    # Mock da coleção
+    mock_collection = mocker.Mock()
+    mock_collection.find_one = AsyncMock(
+        side_effect=[
+            {"id": product_id, "price": 10.0},
+            {"id": product_id, "price": 20.0, "updated_at": updated_at},
+        ]
+    )
+    mock_collection.update_one = AsyncMock(return_value=mocker.Mock(modified_count=1))
+
+    # Mock da classe ProductUsecase
+    usecase = ProductUsecase(mock_collection)
+    updated_product = await usecase.patch(product_id, updates)
+
+    assert updated_product["price"] == 20.0
+    assert "updated_at" in updated_product
+    assert updated_product["updated_at"] == updated_at
+
+
+async def test_patch_should_return_not_found(client, mocker):
+    mocker.patch(
+        "src.usecases.product.ProductUsecase.patch",
+        side_effect=NotFoundException("Product with ID 123 not found"),
+    )
+
+    response = await client.patch("/products/123", json={"price": 20.0})
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Product with ID 123 not found"}
 
 
 async def test_post_should_return_error_on_insertion_failure(client, mocker):

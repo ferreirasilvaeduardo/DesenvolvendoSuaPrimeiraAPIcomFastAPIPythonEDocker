@@ -14,3 +14,9 @@ class InsertionException(Exception):
     def __init__(self, message: str = "Error inserting product"):
         self.message = message
         super().__init__(self.message)
+
+
+class UpdateException(Exception):
+    def __init__(self, message: str = "Error updating product"):
+        self.message = message
+        super().__init__(self.message)

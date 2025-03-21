@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Optional
 
@@ -28,6 +29,7 @@ class ProductUpdate(BaseSchemaMixin):
     quantity: Optional[int] = Field(None, description="Product quantity")
     price: Optional[Decimal_] = Field(None, description="Product price")
     status: Optional[bool] = Field(None, description="Product status")
+    updated_at: Optional[datetime] = Field(None, description="Updated at timestamp")
 
 
 class ProductUpdateOut(ProductOut):
