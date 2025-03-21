@@ -4,7 +4,9 @@ version = "0.0.1"
 description = ""
 authors = ["Eduardo da Silva Ferreira <eduardo.s.fereira@gmail.com>"]
 readme = "README.md"
-
+packages = [
+    { include = "src" }
+]
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "^0.104.1"

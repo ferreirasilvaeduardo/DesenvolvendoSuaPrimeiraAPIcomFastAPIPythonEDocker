@@ -1,0 +1,63 @@
+Análise do Arquivo
+
+Imagem do MongoDB:
+
+Você está usando a imagem zcube/bitnami-compat-mongodb. Certifique-se de que essa imagem é adequada para o seu caso. Caso contrário, você pode usar a imagem oficial do MongoDB:
+Portas:
+
+A configuração 27017:27017 está correta e expõe a porta padrão do MongoDB no host.
+Variáveis de Ambiente:
+
+A variável MONGODB_ADVERTISED_HOSTNAME=localhost pode causar problemas. Dentro do container, o MongoDB não deve usar localhost como hostname, pois o container tem seu próprio hostname. Você pode removê-la ou substituí-la por algo mais genérico, como db.
+Compatibilidade com .env:
+
+O .env está configurado para usar localhost como o host do MongoDB. Isso funcionará porque você está mapeando a porta 27017 do container para o host. No entanto, se você quiser usar o nome do serviço Docker (db), precisará ajustar o .env.
+Ajustes Recomendados
+Aqui está uma versão ajustada do seu docker-compose.yml:
+
+=====================================
+
+version: '3'
+
+services:
+  db:
+    image: mongo:latest  # Usando a imagem oficial do MongoDB
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root  # Opcional: usuário root
+      MONGO_INITDB_ROOT_PASSWORD: example  # Opcional: senha root
+
+================================================
+
+Ajustes no .env
+Se você quiser usar o nome do serviço Docker (db) em vez de localhost, atualize o .env para:
+
+================================================
+
+DATABASE_URL="mongodb://db:27017/store?uuidRepresentation=standard"
+
+================================================
+
+Isso permite que o FastAPI se conecte ao MongoDB usando o nome do serviço Docker (db), que é resolvido automaticamente pelo Docker Compose.
+
+Testando a Configuração
+Subir os Serviços: Execute o comando para iniciar o MongoDB com o Docker Compose:
+
+docker-compose up -d
+
+Verificar os Logs: Certifique-se de que o MongoDB está rodando corretamente:
+
+docker logs mongodb
+
+Testar a Conexão: Use o cliente MongoDB para testar a conexão:
+
+mongo "mongodb://localhost:27017/store?uuidRepresentation=standard"
+
+Se você alterou o .env para usar db como hostname, teste assim:
+
+mongo "mongodb://db:27017/store?uuidRepresentation=standard"
+
+Com os ajustes acima, o docker-compose.yml estará compatível com o .env e sua aplicação FastAPI. Certifique-se de que o MongoDB está rodando corretamente e que o serviço está acessível conforme configurado.
