@@ -3,7 +3,23 @@ from typing import List
 import pytest
 from fastapi import status
 
+from src.utils.exceptions import InsertionException
 from tests.factories import product_data
+
+
+async def test_post_should_return_error_on_insertion_failure(client, mocker):
+    # Simula um erro na inserção
+    mocker.patch(
+        "src.usecases.product.ProductUsecase.create",
+        side_effect=InsertionException("Simulated insertion error"),
+    )
+
+    response = await client.post(
+        "/products/",
+        json={"name": "Produto A", "quantity": 10, "price": "10.0", "status": True},
+    )
+    assert response.status_code == 500
+    assert response.json() == {"detail": "Simulated insertion error"}
 
 
 async def test_controller_create_should_return_success(client, products_url):

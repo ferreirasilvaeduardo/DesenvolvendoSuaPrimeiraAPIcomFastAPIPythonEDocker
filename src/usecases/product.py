@@ -7,7 +7,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from src.database import db_client
 from src.models.product import ProductModel
 from src.schemas.product import ProductIn, ProductOut, ProductUpdate, ProductUpdateOut
-from src.utils.exceptions import NotFoundException
+from src.utils.exceptions import InsertionException, NotFoundException
 
 
 class ProductUsecase:
@@ -17,10 +17,13 @@ class ProductUsecase:
         self.collection = self.database.get_collection("products")
 
     async def create(self, body: ProductIn) -> ProductOut:
-        product_model = ProductModel(**body.model_dump())
-        await self.collection.insert_one(product_model.model_dump())
-
-        return ProductOut(**product_model.model_dump())
+        try:
+            # Lógica para inserir o produto no banco de dados
+            product = ProductModel(**body.dict())
+            await self.collection.insert_one(product.dict())
+            return ProductOut(**product.dict())
+        except Exception as e:
+            raise InsertionException(f"Failed to insert product: {str(e)}")
 
     async def get(self, id: UUID) -> ProductOut:
         result = await self.collection.find_one({"id": id})

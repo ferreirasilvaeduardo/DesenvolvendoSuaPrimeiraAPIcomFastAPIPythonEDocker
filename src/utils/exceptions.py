@@ -8,3 +8,9 @@ class BaseException(Exception):  # Renamed to avoid conflict
 
 class NotFoundException(BaseException):  # Updated to inherit from the renamed class
     message = "Not Found"
+
+
+class InsertionException(Exception):
+    def __init__(self, message: str = "Error inserting product"):
+        self.message = message
+        super().__init__(self.message)
